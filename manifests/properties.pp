@@ -25,23 +25,19 @@ class pacemaker::properties (
 ) {
   
   pcmk_property { 'stonith-enabled':
-    ensure => present,
     value  => $stonith
   }
 
   pcmk_property { 'no-quorum-policy':
-    ensure => present,
     value  => $quorum
   }
 
   pcmk_property { 'symmetric-cluster':
-    ensure => present,
     value  => $symmetric_cluster
   }
 
   if($resource_stickiness) {
     pcmk_rsc_defaults { 'resource-stickiness':
-      ensure => present,
       value  => $resource_stickiness
     }
   }

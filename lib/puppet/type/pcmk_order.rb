@@ -9,6 +9,8 @@ Puppet::Type.newtype :pcmk_order do
     newvalue :absent do
       provider.destroy
     end
+
+    defaultto :present
   end
 
   newparam :name do

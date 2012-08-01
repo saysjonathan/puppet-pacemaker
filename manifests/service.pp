@@ -17,29 +17,20 @@
 class pacemaker::service (
   $service,
   $transport,
-  $corosync_service_file
 ) {
   
-  if $transport == 'corosync' {
-    file { $corosync_service_file:
-      ensure  => present,
-      content => template("${module_name}/pcmk.erb"),
-      mode    => '0644',
-      notify  => Exec['pcmk-stack-restart']
-    }
-  }
-
   service { $service:
     ensure     => running,
     enable     => true,
     hasstatus  => true,
-    hasrestart => true
+    hasrestart => true,
+    require    => Exec['pcmk-stack-restart']
   }
 
   exec { 'pcmk-stack-restart':
-    command     => "service pacemaker stop && service ${transport} restart && service pacemaker start",
-    path        => ['/bin', '/sbin'],
-    onlyif      => "service ${transport} status",
-    refreshonly => true
+    #command     => "service pacemaker stop && service ${transport} restart && service pacemaker start",
+    command => "service corosync restart",
+    path    => ['/bin', '/sbin'],
+    onlyif  => "/usr/bin/test ! -e /var/run/pacemaker.pid",
   } 
 }

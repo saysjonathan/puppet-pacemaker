@@ -1,7 +1,27 @@
-Puppet::Type.type(:pcmk_property).provide(:pcmk_property) do
+require 'puppet/provider/pacemaker'
+require 'rexml/document'
+
+Puppet::Type.type(:pcmk_property).provide(:pcmk_property, :parent => Puppet::Provider::Pacemaker) do
   desc 'Pacemaker property provider'
 
   optional_commands :crm => '/usr/sbin/crm'
+
+  mk_resource_methods
+
+  def self.instances
+    instances = []
+    cmd = crm 'configure', 'show', 'xml'
+    xml = REXML::Document.new(cmd)
+   
+    REXML::XPath.each(xml, "//cib/configuration/crm_config/cluster_property_set/nvpair") do |element|
+      property = {
+        :name => element.attributes['name'],
+        :value => element.attributes['value']
+      }
+      instances << new(property)
+    end
+    instances
+  end
 
   def create
     debug 'Creating resource %s' % resource[:name]
@@ -15,6 +35,11 @@ Puppet::Type.type(:pcmk_property).provide(:pcmk_property) do
 
   def exists?
     debug 'Checking status of %s' % resource[:name]
-    return false
+    properties[:ensure] != :absent
+  end
+
+  def value=(value)
+    debug 'Changing value of %s' % resource[:name]
+    crm 'configure', 'property', "#{resource[:name]}=#{value}"
   end
 end

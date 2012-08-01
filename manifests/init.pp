@@ -23,6 +23,7 @@
 class pacemaker (
   $clones              = {},
   $colocations         = {},
+  $generic_daemons     = {},
   $locations           = {},
   $orders              = {},
   $package             = $package,
@@ -35,34 +36,32 @@ class pacemaker (
   $vips                = {}
 ) inherits pacemaker::defaults {
 
-  Pacemaker::Anchor["${module_name}::begin"] -> Class["${module_name}::package"] -> Class["${module_name}::service"] -> Class["${module_name}::properties"] -> Class["${module_name}::resources"] -> Pacemaker::Anchor["${module_name}::end"]
-
   pacemaker::anchor { "${module_name}::begin": }
-  
+  ->
   class { "${module_name}::package":
     package => $package
   }
-
+  ->
   class { "${module_name}::service":
-    service               => $service,
-    transport             => $transport,
-    corosync_service_file => $corosync_service_file
+    service   => $service,
+    transport => $transport,
   }
-
+  ->
   class { "${module_name}::properties":
     stonith             => $stonith,
     quorum              => $quorum,
     resource_stickiness => $resource_stickiness,
     symmetric_cluster   => $symmetric_cluster
   }
-
+  ->
   class { "${module_name}::resources":
-    clones      => $clones,
-    colocations => $colocations,
-    locations   => $locations,
-    orders      => $orders,
-    vips        => $vips
+    clones          => $clones,
+    colocations     => $colocations,
+    generic_daemons => $generic_daemons,
+    locations       => $locations,
+    orders          => $orders,
+    vips            => $vips
   }
-
+  ->
   pacemaker::anchor { "${module_name}::end": }
 }

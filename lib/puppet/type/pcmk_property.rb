@@ -9,6 +9,8 @@ Puppet::Type.newtype(:pcmk_property) do
     newvalue(:absent) do
       provider.destroy
     end
+
+    defaultto :present
   end
 
   newparam(:name) do
@@ -16,11 +18,7 @@ Puppet::Type.newtype(:pcmk_property) do
     isnamevar
   end
 
-  newparam(:value) do
+  newproperty(:value) do
     desc 'Resource property value'
-  end
-
-  newparam(:id) do
-    desc 'Property id'
   end
 end

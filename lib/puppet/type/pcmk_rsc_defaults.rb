@@ -9,6 +9,8 @@ Puppet::Type.newtype(:pcmk_rsc_defaults) do
     newvalue(:absent) do
       provider.destroy
     end
+
+    defaultto :present
   end
 
   newparam(:name) do
@@ -16,7 +18,7 @@ Puppet::Type.newtype(:pcmk_rsc_defaults) do
     isnamevar
   end
 
-  newparam(:value) do
+  newproperty(:value) do
     desc 'Resource default value'
   end
 end
