@@ -21,6 +21,7 @@
 #   }
 
 class pacemaker (
+  $additional_agents   = false,
   $clones              = {},
   $colocations         = {},
   $generic_daemons     = {},
@@ -40,6 +41,10 @@ class pacemaker (
   ->
   class { "${module_name}::package":
     package => $package
+  }
+  ->
+  class { "${module_name}::agents":
+    additional_agents => $additional_agents
   }
   ->
   class { "${module_name}::service":
