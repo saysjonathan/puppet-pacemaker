@@ -28,6 +28,7 @@ class pacemaker (
   $generic_daemons        = {},
   $locations              = {},
   $ms                     = {},
+  $prms                   = {},
   $orders                 = {},
   $package                = $package,
   $quorum                 = $quorum,
@@ -68,6 +69,7 @@ class pacemaker (
     generic_daemons => $generic_daemons,
     locations       => $locations,
     ms              => $ms,
+    prms            => $prms,
     orders          => $orders,
     vips            => $vips
   }

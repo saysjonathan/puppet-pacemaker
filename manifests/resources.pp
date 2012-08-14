@@ -14,6 +14,7 @@ class pacemaker::resources(
   $generic_daemons,
   $locations,
   $ms,
+  $prms,
   $orders,
   $vips
 ) {
@@ -26,6 +27,10 @@ class pacemaker::resources(
   ->
   class { "${module_name}::resources::generic_daemons":
     generic_daemons => $generic_daemons
+  }
+  ->
+  class { "${module_name}::resources::prms":
+    prms => $prms
   }
   ->
   class { "${module_name}::resources::clones":
