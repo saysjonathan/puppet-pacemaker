@@ -18,10 +18,11 @@
 #   }
 
 class pacemaker::properties (
+  $default_action_timeout,
   $quorum,
+  $resource_stickiness,
   $stonith,
-  $symmetric_cluster,
-  $resource_stickiness
+  $symmetric_cluster
 ) {
   
   pcmk_property { 'stonith-enabled':
@@ -40,5 +41,9 @@ class pacemaker::properties (
     pcmk_rsc_defaults { 'resource-stickiness':
       value  => $resource_stickiness
     }
+  }
+
+  pcmk_property { 'default-action-timeout':
+    value => $default_action_timeout
   }
 }

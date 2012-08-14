@@ -21,20 +21,22 @@
 #   }
 
 class pacemaker (
-  $additional_agents   = false,
-  $clones              = {},
-  $colocations         = {},
-  $generic_daemons     = {},
-  $locations           = {},
-  $orders              = {},
-  $package             = $package,
-  $quorum              = $quorum,
-  $resource_stickiness = false,
-  $service             = $service,
-  $stonith             = $stonith,
-  $symmetric_cluster   = $symmetric_cluster,
-  $transport           = $transport,
-  $vips                = {}
+  $additional_agents      = false,
+  $clones                 = {},
+  $colocations            = {},
+  $default_action_timeout = '30',
+  $generic_daemons        = {},
+  $locations              = {},
+  $ms                     = {},
+  $orders                 = {},
+  $package                = $package,
+  $quorum                 = $quorum,
+  $resource_stickiness    = false,
+  $service                = $service,
+  $stonith                = $stonith,
+  $symmetric_cluster      = $symmetric_cluster,
+  $transport              = $transport,
+  $vips                   = {}
 ) inherits pacemaker::defaults {
 
   pacemaker::anchor { "${module_name}::begin": }
@@ -53,10 +55,11 @@ class pacemaker (
   }
   ->
   class { "${module_name}::properties":
-    stonith             => $stonith,
-    quorum              => $quorum,
-    resource_stickiness => $resource_stickiness,
-    symmetric_cluster   => $symmetric_cluster
+    default_action_timeout => $default_action_timeout,
+    quorum                 => $quorum,
+    resource_stickiness    => $resource_stickiness,
+    stonith                => $stonith,
+    symmetric_cluster      => $symmetric_cluster
   }
   ->
   class { "${module_name}::resources":
@@ -64,6 +67,7 @@ class pacemaker (
     colocations     => $colocations,
     generic_daemons => $generic_daemons,
     locations       => $locations,
+    ms              => $ms,
     orders          => $orders,
     vips            => $vips
   }

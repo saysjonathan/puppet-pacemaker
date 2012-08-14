@@ -13,6 +13,7 @@ class pacemaker::resources(
   $colocations,
   $generic_daemons,
   $locations,
+  $ms,
   $orders,
   $vips
 ) {
@@ -29,6 +30,10 @@ class pacemaker::resources(
   ->
   class { "${module_name}::resources::clones":
     clones => $clones
+  }
+  ->
+  class { "${module_name}::resources::ms":
+    ms => $ms
   }
   ->
   class { "${module_name}::resources::locations":
