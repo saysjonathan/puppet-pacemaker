@@ -22,7 +22,11 @@ Puppet::Type.type(:pcmk_ms).provide(:pcmk_ms, :parent => Puppet::Provider::Pacem
       notification = REXML::XPath.first(xml, basepath + "[@id='#{name}']/meta_attributes/nvpair[@id='#{name}-meta_attributes-notify']").attributes['value']
       globally_unique = REXML::XPath.first(xml, basepath + "[@id='#{name}']/meta_attributes/nvpair[@id='#{name}-meta_attributes-globally-unique']").attributes['value']
       target_role = REXML::XPath.first(xml, basepath + "[@id='#{name}']/meta_attributes/nvpair[@id='#{name}-meta_attributes-target-role']").attributes['value']
-      manage = REXML::XPath.first(xml, basepath + "[@id='#{name}']/meta_attributes/nvpair[@id='#{name}-meta_attributes-is-managed']").attributes['value']
+      if REXML::XPath.first(xml, basepath + "[@id='#{name}']/meta_attributes/nvpair[@id='#{name}-meta_attributes-is-managed']")
+        manage = REXML::XPath.first(xml, basepath + "[@id='#{name}']/meta_attributes/nvpair[@id='#{name}-meta_attributes-is-managed']").attributes['value']
+      else
+        manage = nil
+      end
 
       property = {
         :name => name,
