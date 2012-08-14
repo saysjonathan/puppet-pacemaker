@@ -7,6 +7,7 @@ Puppet::Type.type(:pcmk_location).provide(:pcmk_location, :parent => Puppet::Pro
   optional_commands :crm => '/usr/sbin/crm'
   
   def self.instances
+    instances = []
     cmd = crm 'configure', 'show', 'xml'
     xml = REXML::Document.new(cmd)
     basepath = "//cib/configuration/constraints/rsc_location"
@@ -26,8 +27,9 @@ Puppet::Type.type(:pcmk_location).provide(:pcmk_location, :parent => Puppet::Pro
         :operation => operation,
         :value => value,
       }
-      puts property
+      instances << new(property)
     end
+    instances
   end
 
   def create
