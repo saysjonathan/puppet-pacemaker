@@ -14,28 +14,38 @@ Puppet::Type.type(:pcmk_vip).provide(:pcmk_vip, :parent => Puppet::Provider::Pac
     instances = []
     cmd = crm 'configure', 'show', 'xml'
     xml = REXML::Document.new(cmd)
-    basepath = "//cib/configuration/resources/primitive[@type='IPaddr2']"
+    basepath = ["//cib/configuration/resources/primitive[@type='IPaddr2']", "//cib/configuration/resources/master/primitive[@type='IPaddr2']", "//cib/configuration/resources/clone/primitive[@type='IPaddr2']"]
+    basepath.each do |path|
+      begin
+        REXML::XPath.each(xml, path) do |e|
+          
+          if ! name = e.attributes['id']
+            next
+          end
 
-    REXML::XPath.each(xml, basepath) do |e|
-      property = {}
-      name = e.attributes['id']
+          ip = REXML::XPath.first(xml, path + "[@id='#{name}']/instance_attributes/nvpair[@id='#{name}-instance_attributes-ip']").attributes['value']
+          cidr_netmask = REXML::XPath.first(xml, path + "[@id='#{name}']/instance_attributes/nvpair[@id='#{name}-instance_attributes-cidr_netmask']").attributes['value']
+          nic = REXML::XPath.first(xml, path + "[@id='#{name}']/instance_attributes/nvpair[@id='#{name}-instance_attributes-nic']").attributes['value']
+          if REXML::XPath.first(xml, path + "[@id='#{name}']/instance_attributes/nvpair[@id='#{name}-instance_attributes-clusterip_hash']")
+            clusterip_hash = REXML::XPath.first(xml, path + "[@id='#{name}']/instance_attributes/nvpair[@id='#{name}-instance_attributes-clusterip_hash']").attributes['value']
+          end
+          op = REXML::XPath.first(xml, path + "[@id='#{name}']/operations/op").attributes['name']
+          interval = REXML::XPath.first(xml, path + "[@id='#{name}']/operations/op").attributes['interval']
+          
+          property = {}
+          property[:name] = name
+          property[:ip] = ip
+          property[:cidr_netmask] = cidr_netmask
+          property[:nic] = nic
+          if clusterip_hash
+            property[:clusterip_hash] = clusterip_hash
+          end
+          property[:op] = op
+          property[:interval] = interval
 
-      ip = REXML::XPath.first(xml, basepath + "[@id='#{name}']/instance_attributes/nvpair[@id='#{name}-instance_attributes-ip']").attributes['value']
-      cidr_netmask = REXML::XPath.first(xml, basepath + "[@id='#{name}']/instance_attributes/nvpair[@id='#{name}-instance_attributes-cidr_netmask']").attributes['value']
-      nic = REXML::XPath.first(xml, basepath + "[@id='#{name}']/instance_attributes/nvpair[@id='#{name}-instance_attributes-nic']").attributes['value']
-      #clusterip_hash = REXML::XPath.first(xml, basepath + "[@id='#{name}']/instance_attributes/nvpair[@id='#{name}-instance_attributes-clusterip_hash']").attributes['value']
-      op = REXML::XPath.first(xml, basepath + "[@id='#{name}']/operations/op").attributes['name']
-      interval = REXML::XPath.first(xml, basepath + "[@id='#{name}']/operations/op").attributes['interval']
-
-      property[:name] = name
-      property[:ip] = ip
-      property[:cidr_netmask] = cidr_netmask
-      property[:nic] = nic
-      #property[:clusterip_hash] = clusterip_hash
-      property[:op] = op
-      property[:interval] = interval
-
-      instances << new(property)
+          instances << new(property)
+        end
+      end
     end
     instances
   end
