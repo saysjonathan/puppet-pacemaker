@@ -43,8 +43,8 @@ Puppet::Type.type(:pcmk_prm).provide(:pcmk_prm, :parent => Puppet::Provider::Pac
           :binary => binary,
           :test_user => test_user,
           :test_passwd => test_passwd,
-          :master_interval => master_interval,
-          :slave_interval => slave_interval
+          :master_monitor_interval => master_monitor_interval,
+          :slave_monitor_interval => slave_monitor_interval
         }
         
         instances << new(property)
