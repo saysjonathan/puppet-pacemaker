@@ -9,6 +9,8 @@ Puppet::Type.newtype :pcmk_location do
     newvalue :absent do
       provider.destroy
     end
+
+    defaultto :present
   end
 
   newparam :name do
@@ -26,5 +28,17 @@ Puppet::Type.newtype :pcmk_location do
 
   newparam :score do
     desc 'Node score for resource location'
+  end
+
+  newparam :attribute do
+    desc 'Name of rule attribute'
+  end
+
+  newparam :operation do
+    desc 'Name of rule operation'
+  end
+
+  newparam :value do
+    desc 'Attribute operation value'
   end
 end
