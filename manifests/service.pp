@@ -16,7 +16,7 @@
 
 class pacemaker::service (
   $service,
-  $transport,
+  $transport
 ) {
   
   service { $service:
