@@ -25,7 +25,9 @@ Puppet::Type.type(:pcmk_vip).provide(:pcmk_vip, :parent => Puppet::Provider::Pac
 
           ip = REXML::XPath.first(xml, path + "[@id='#{name}']/instance_attributes/nvpair[@id='#{name}-instance_attributes-ip']").attributes['value']
           cidr_netmask = REXML::XPath.first(xml, path + "[@id='#{name}']/instance_attributes/nvpair[@id='#{name}-instance_attributes-cidr_netmask']").attributes['value']
-          nic = REXML::XPath.first(xml, path + "[@id='#{name}']/instance_attributes/nvpair[@id='#{name}-instance_attributes-nic']").attributes['value']
+          if nic = REXML::XPath.first(xml, path + "[@id='#{name}']/instance_attributes/nvpair[@id='#{name}-instance_attributes-nic']")
+            nic = REXML::XPath.first(xml, path + "[@id='#{name}']/instance_attributes/nvpair[@id='#{name}-instance_attributes-nic']").attributes['value']
+          end
           if REXML::XPath.first(xml, path + "[@id='#{name}']/instance_attributes/nvpair[@id='#{name}-instance_attributes-clusterip_hash']")
             clusterip_hash = REXML::XPath.first(xml, path + "[@id='#{name}']/instance_attributes/nvpair[@id='#{name}-instance_attributes-clusterip_hash']").attributes['value']
           end
@@ -37,9 +39,7 @@ Puppet::Type.type(:pcmk_vip).provide(:pcmk_vip, :parent => Puppet::Provider::Pac
           property[:ip] = ip
           property[:cidr_netmask] = cidr_netmask
           property[:nic] = nic
-          if clusterip_hash
-            property[:clusterip_hash] = clusterip_hash
-          end
+          property[:clusterip_hash] = clusterip_hash
           property[:op] = op
           property[:interval] = interval
 
