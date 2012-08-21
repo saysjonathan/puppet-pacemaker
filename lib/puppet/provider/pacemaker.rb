@@ -3,10 +3,12 @@ class Puppet::Provider::Pacemaker < Puppet::Provider
   # action (besides initialization of each object).
   def self.prefetch(resources)
     debug("[prefetch(resources)]")
-    block_until_ready
-    instances.each do |prov|
-      if resource = resources[prov.name] || resources[prov.name.downcase]
-        resource.provider = prov
+    if File.exists?('/usr/sbin/crm')
+      block_until_ready
+      instances.each do |prov|
+        if resource = resources[prov.name] || resources[prov.name.downcase]
+          resource.provider = prov
+        end
       end
     end
   end

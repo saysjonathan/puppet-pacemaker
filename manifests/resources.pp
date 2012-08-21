@@ -8,7 +8,7 @@
 # == Notes:
 # These are split into separate classes to ensure the resources are instantiated in the correct order.
 
-class pacemaker::resources(
+class pacemaker::resources (
   $clones,
   $colocations,
   $generic_daemons,
